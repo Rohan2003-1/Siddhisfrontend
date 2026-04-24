@@ -2,8 +2,15 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { submitBooking, setSelectedDate, setSelectedTime, setSelectedService, selectSelectedDate, selectSelectedTime, selectSelectedService, selectBookingsLoading } from '../features/bookingSlice';
-import { mockServices } from '../data/mockData';
 import { timeSlots, formatDate } from '../utils/helpers';
+
+const services = [
+  { id: 1, name: 'Computer Repair', duration: '2-4 hours', price: 'Starting ₹499', icon: '🔧' },
+  { id: 2, name: 'Software Installation', duration: '1-2 hours', price: 'Starting ₹299', icon: '⚙️' },
+  { id: 3, name: 'Exam Form', duration: '30 mins', price: 'Starting ₹50', icon: '📝' },
+  { id: 4, name: 'PF Service', duration: '1-2 days', price: 'Starting ₹199', icon: '🏦' },
+  { id: 5, name: 'Other', duration: 'Flexible', price: 'Varies', icon: '❓' },
+];
 import { Calendar, Clock, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { selectIsAuthenticated, selectUser } from '../features/authSlice';
@@ -136,7 +143,7 @@ const Booking = () => {
               <motion.div key="service" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
                 <h2 className="text-2xl font-bold text-primary mb-6">Select a Service</h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                  {mockServices.map(service => (
+                  {services.map(service => (
                     <motion.button
                       key={service.id}
                       whileHover={{ y: -4 }}
