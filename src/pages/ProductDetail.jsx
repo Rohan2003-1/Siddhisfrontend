@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectAllProducts } from '../features/productSlice';
 import { addToCart } from '../features/cartSlice';
 import { fetchProductByIdAPI } from '../services/productService';
-import { mockReviews } from '../data/mockData';
+
 import { formatCurrency, getDiscount } from '../utils/helpers';
 import PageWrapper from '../components/layout/PageWrapper';
 import Button from '../components/ui/Button';
@@ -215,7 +215,7 @@ const ProductDetail = () => {
               {['specs', 'reviews'].map(t => (
                 <button key={t} onClick={() => setTab(t)}
                   className={`flex-1 py-4 font-semibold capitalize transition-colors ${tab === t ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-primary'}`}>
-                  {t === 'specs' ? 'Specifications' : `Reviews (${mockReviews.length})`}
+                  {t === 'specs' ? 'Specifications' : `Reviews (${(product.reviews || []).length})`}
                 </button>
               ))}
             </div>
@@ -235,21 +235,30 @@ const ProductDetail = () => {
                 ) : (
                   <motion.div key="reviews" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
                     className="space-y-4">
-                    {mockReviews.map(r => (
-                      <div key={r.id} className="p-4 bg-surface/50 rounded-2xl">
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">{r.avatar}</div>
-                          <div>
-                            <p className="font-semibold text-gray-800 text-sm">{r.user}</p>
-                            <p className="text-xs text-gray-400">{r.date}</p>
+                    {product.reviews && product.reviews.length > 0 ? (
+                      product.reviews.map(r => (
+                        <div key={r._id} className="p-4 bg-surface/50 rounded-2xl">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                              {r.name?.[0]?.toUpperCase() || 'U'}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-gray-800 text-sm">{r.name}</p>
+                              <p className="text-xs text-gray-400">{new Date(r.createdAt).toLocaleDateString()}</p>
+                            </div>
+                            <div className="ml-auto flex">
+                              {[1,2,3,4,5].map(s => <Star key={s} size={14} className={s <= r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />)}
+                            </div>
                           </div>
-                          <div className="ml-auto flex">
-                            {[1,2,3,4,5].map(s => <Star key={s} size={14} className={s <= r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />)}
-                          </div>
+                          <p className="text-gray-600 text-sm">{r.comment}</p>
                         </div>
-                        <p className="text-gray-600 text-sm">{r.comment}</p>
+                      ))
+                    ) : (
+                      <div className="py-12 text-center">
+                        <div className="text-4xl mb-4">💬</div>
+                        <p className="text-gray-500 font-medium">No reviews yet for this product.</p>
                       </div>
-                    ))}
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>

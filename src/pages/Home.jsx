@@ -5,7 +5,7 @@ import { ArrowRight, Shield, Truck, Headphones, Star, ChevronRight, Zap } from '
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts, selectAllProducts } from '../features/productSlice';
 import { fetchCategories, selectAllCategories } from '../features/categorySlice';
-import { mockTestimonials } from '../data/mockData';
+
 import ProductCard from '../components/product/ProductCard';
 import PageWrapper from '../components/layout/PageWrapper';
 import Button from '../components/ui/Button';
@@ -298,40 +298,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20 bg-surface/40">
-        <div className="page-container">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="text-center mb-12">
-            <motion.h2 variants={fadeUp} className="section-heading">What Customers Say</motion.h2>
-            <motion.p variants={fadeUp} className="section-subheading">Real reviews from our valued customers</motion.p>
-          </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {mockTestimonials.map((t, i) => (
-              <motion.div
-                key={t.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="bg-white rounded-2xl p-6 shadow-card"
-              >
-                <div className="flex mb-3">
-                  {[1,2,3,4,5].map(s => <Star key={s} size={16} className={s <= t.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />)}
-                </div>
-                <p className="text-gray-600 leading-relaxed mb-5 text-sm">"{t.text}"</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">{t.avatar}</div>
-                  <div>
-                    <p className="font-semibold text-gray-800 text-sm">{t.name}</p>
-                    <p className="text-xs text-gray-500">{t.role}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+
     </PageWrapper>
   );
 };
