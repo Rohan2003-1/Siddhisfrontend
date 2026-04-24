@@ -23,6 +23,16 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.status === 401) {
+      // Clear invalid/expired session data
+      localStorage.removeItem('sc_user');
+      localStorage.removeItem('sc_token');
+      // Redirect to login if not already there
+      if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+        window.location.href = '/login';
+      }
+    }
+
     const message =
       error.response?.data?.message ||
       error.response?.data?.error ||
