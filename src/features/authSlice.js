@@ -6,7 +6,7 @@ import { loginAPI, registerAPI, verifyOTPAPI, logoutAPI, getMeAPI } from '../ser
 export const loginUser = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
   try {
     const { data } = await loginAPI(credentials);
-    return data.user;
+    return data; // returns { user, token }
   } catch (err) {
     return rejectWithValue(err.message);
   }
@@ -24,7 +24,7 @@ export const registerUser = createAsyncThunk('auth/register', async (userData, {
 export const verifyOTP = createAsyncThunk('auth/verifyOTP', async (payload, { rejectWithValue }) => {
   try {
     const { data } = await verifyOTPAPI(payload);
-    return data.user;
+    return data; // returns { user, token }
   } catch (err) {
     return rejectWithValue(err.message);
   }
@@ -80,17 +80,19 @@ const authSlice = createSlice({
   reducers: {
     // Keep these for direct dispatch (e.g., profile edit without API round-trip)
     loginSuccess: (state, action) => {
-      state.user = action.payload;
+      state.user = action.payload.user || action.payload;
       state.isAuthenticated = true;
       state.loading = false;
       state.error = null;
-      localStorage.setItem('sc_user', JSON.stringify(action.payload));
+      localStorage.setItem('sc_user', JSON.stringify(state.user));
+      if (action.payload.token) localStorage.setItem('sc_token', action.payload.token);
     },
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
       state.pendingEmail = null;
       localStorage.removeItem('sc_user');
+      localStorage.removeItem('sc_token');
     },
     setLoading: (state, action) => {
       state.loading = action.payload;
@@ -112,9 +114,10 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user;
         state.isAuthenticated = true;
-        localStorage.setItem('sc_user', JSON.stringify(action.payload));
+        localStorage.setItem('sc_user', JSON.stringify(action.payload.user));
+        localStorage.setItem('sc_token', action.payload.token);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -145,10 +148,11 @@ const authSlice = createSlice({
       })
       .addCase(verifyOTP.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user;
         state.isAuthenticated = true;
         state.pendingEmail = null;
-        localStorage.setItem('sc_user', JSON.stringify(action.payload));
+        localStorage.setItem('sc_user', JSON.stringify(action.payload.user));
+        localStorage.setItem('sc_token', action.payload.token);
       })
       .addCase(verifyOTP.rejected, (state, action) => {
         state.loading = false;
@@ -161,6 +165,7 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         localStorage.removeItem('sc_user');
+        localStorage.removeItem('sc_token');
       });
 
     // Fetch current user
@@ -171,10 +176,10 @@ const authSlice = createSlice({
         localStorage.setItem('sc_user', JSON.stringify(action.payload));
       })
       .addCase(fetchMe.rejected, (state) => {
-        // Cookie expired / invalid — clear local data
         state.user = null;
         state.isAuthenticated = false;
         localStorage.removeItem('sc_user');
+        localStorage.removeItem('sc_token');
       })
       .addCase(updateProfileDetails.fulfilled, (state, action) => {
         state.user = { ...state.user, ...action.payload };
