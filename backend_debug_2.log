@@ -1,0 +1,13 @@
+
+> backend@1.0.0 dev
+> nodemon src/server.js
+
+[33m[nodemon] 3.1.14[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node src/server.js`[39m
+◇ injected env (15) from .env // tip: ⌘ suppress logs { quiet: true }
+MongoDB Connected: ac-ym3j2wc-shard-00-00.uasngy1.mongodb.net
+Server running in development mode on port 5001
+[0mGET /api/v1/products [32m200[0m 164.372 ms - 1162[0m
